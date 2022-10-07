@@ -13,14 +13,15 @@ class CountryListBloc extends Bloc<CountryListEvent, CountryListState> {
   CountryListBloc() : super(CountryListInitial()) {
     final ApiRepository _apiRepository = ApiRepository();
 
+    Countries? mList;
     Future<void> _getCountries(Emitter<CountryListState> emit) async {
       try {
         emit(CountryListLoading());
-        final mList = await _apiRepository.getCountries();
+        mList = await _apiRepository.getCountries();
 
         emit(CountryListLoaded(mList));
         if (mList!.status != true) {
-          emit(CountryListError(mList.message));
+          emit(CountryListError(mList!.message));
         }
       } on NetworkError {
         emit(CountryListError("Failed to fetch data. is your device online?"));
@@ -29,6 +30,16 @@ class CountryListBloc extends Bloc<CountryListEvent, CountryListState> {
 
     on<GetCountriesList>((event, emit) async {
       await _getCountries(emit);
+    });
+
+    Future<void> _removeCountry(Emitter<CountryListState> emit) async {
+      emit(CountryListLoading());
+      mList!.data!.countries!.remove(mList!.data!.countries!.first);
+      emit(CountryListLoaded(mList));
+    }
+
+    on<RemoveCountriesList>((event, emit) async {
+      await _removeCountry(emit);
     });
   }
 }

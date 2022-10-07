@@ -8,3 +8,5 @@ abstract class CountryListEvent extends Equatable {
 }
 
 class GetCountriesList extends CountryListEvent {}
+
+class RemoveCountriesList extends CountryListEvent {}

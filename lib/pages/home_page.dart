@@ -119,9 +119,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _pullRefresh() async {
     _countryListBloc.add(GetCountriesList());
-
-    Future.delayed(const Duration(seconds: 10), () {
-      _countryListBloc.emit(CountryListError('List has been removed.'));
+    Timer.periodic(const Duration(seconds: 10), (timer) {
+      _countryListBloc.add(RemoveCountriesList());
+      if (_countryListBloc.state.props == 0) {
+        timer.cancel();
+      }
     });
   }
 
